@@ -50,7 +50,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: "npm run preview",
+    command: "turbo run preview",
     url: "http://localhost:4001",
     // reuseExistingServer: !process.env.CI,
   },

@@ -4,21 +4,21 @@ on:
     branches: [main]
 
 jobs:
-  build_docs: 
-    name: Build docs
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: 
-          node-version: 20
-      - run: npm ci
-      - name: Build Documentation Site
-        run: npm run docs:build
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./apps/docs/out
+  # build_docs: 
+  #   name: Build docs
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with: 
+  #         node-version: 20
+  #     - run: npm ci
+  #     - name: Build Documentation Site
+  #       run: npm run docs:build
+  #     - name: Upload artifact
+  #       uses: actions/upload-pages-artifact@v3
+  #       with:
+  #         path: ./apps/docs/out
 
   build_and_test:
     name: "Build and Test"
@@ -37,14 +37,6 @@ jobs:
           name: package-dist
           retention-days: 30
           path: packages/mdxe-plugin-highlight/dist
-      - name: Create env file
-        run: | 
-          cd apps/example-react
-          touch .env
-          echo VITE_POSTHOG_KEY=${{secrets.VITE_POSTHOG_KEY}} >> .env
-          echo VITE_CHECK_FOR_DEV=false >> .env
-          echo VITE_APP_TITLE=Example >> .env
-          cd ../..
       - name: "Build Vite App"
         run: npm run example:build
       - name: Install Playwright Browsers
