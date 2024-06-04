@@ -1,0 +1,58 @@
+{
+    "name": "mdxe-plugin-highlight",
+    "version": "2.0.5",
+    "type": "module",
+    "homepage": "",
+    "keywords": [
+        "vite",
+        "posthog",
+        "analytics",
+        "plugin"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/RockiRider/mdxe.git",
+        "directory": "packages/mdxe-plugin-highlight"
+    },
+    "license": "MIT",
+    "scripts": {
+        "build": "rollup -c"
+    },
+    "types": "dist/index.d.ts",
+    "typings": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/core/index.js"
+        }
+    },
+    "files": [
+        "dist",
+        "package.json",
+        "README.md"
+    ],
+    "peerDependencies": {
+        "@types/react": ">=16.8.0",
+        "react": ">=16.8.0",
+        "@mdxeditor/editor": ">=3.0.0"
+    },
+    "peerDependenciesMeta": {
+        "@types/react": {
+            "optional": true
+        }
+    },
+    "devDependencies": {
+        "@rollup/plugin-node-resolve": "^15.2.3",
+        "@rollup/plugin-typescript": "^11.1.6",
+        "@rollup/pluginutils": "^5.1.0",
+        "posthog-js": "latest",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "rollup": "^4.9.5",
+        "tslib": "^2.6.2",
+        "vite": "^5.0.8",
+        "lexical": "^0.16.0"
+    },
+    "dependencies": {
+        "@mdxeditor/editor": "^3.4.0"
+    }
+}

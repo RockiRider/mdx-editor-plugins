@@ -1,0 +1,29 @@
+{
+  "name": "mdxe-plugins",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev --filter=example-react",
+    "docs:dev": "turbo dev --filter=docs",
+    "docs:build": "turbo build --filter=docs",
+    "example:build": "turbo build --filter=example-react",
+    "lint": "turbo lint",
+    "hl:build": "turbo build --filter=mdxe-plugin-highlight",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "preview": "turbo preview --filter=example-react",
+    "fpreview": "turbo preview --filter=example-react --force",
+    "test": "npx playwright test",
+    "test:ui": "npx playwright test --ui",
+    "deploy": "bash ./bin/deploy.sh mdxe-plugin-highlight"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.1",
+    "@types/node": "^20.11.0",
+    "prettier": "^3.1.1",
+    "turbo": "latest",
+    "typescript": "^5.4.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@9.1.4"
+}
