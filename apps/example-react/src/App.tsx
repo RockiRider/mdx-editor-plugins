@@ -6,7 +6,7 @@ import Editor from "./Editor";
 function App() {
   return (
     <>
-      <div>
+      <div style={{ textAlign: "center" }}>
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>

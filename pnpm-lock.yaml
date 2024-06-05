@@ -29,6 +29,9 @@ importers:
       '@mdxeditor/editor':
         specifier: ^3.4.0
         version: 3.4.0(@codemirror/language@6.10.2)(@lezer/common@1.2.1)(@lezer/highlight@1.2.0)(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(yjs@13.6.15)
+      mdxe-plugin-highlight:
+        specifier: workspace:^
+        version: link:../../packages/mdxe-plugin-highlight
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -109,12 +112,12 @@ importers:
       '@rollup/pluginutils':
         specifier: ^5.1.0
         version: 5.1.0(rollup@4.18.0)
+      '@types/mdast':
+        specifier: ^4.0.4
+        version: 4.0.4
       lexical:
-        specifier: ^0.16.0
-        version: 0.16.0
-      posthog-js:
-        specifier: latest
-        version: 1.136.7
+        specifier: ^0.14.5
+        version: 0.14.5
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -127,9 +130,6 @@ importers:
       tslib:
         specifier: ^2.6.2
         version: 2.6.3
-      vite:
-        specifier: ^5.0.8
-        version: 5.2.12(@types/node@20.14.1)
 
   packages/typescript-config: {}
 
@@ -2067,9 +2067,6 @@ packages:
   fault@2.0.1:
     resolution: {integrity: sha512-WtySTkS4OKev5JtpHXnib4Gxiurzh5NCGvWrFaZ34m6JehfTUhKZvn9njTfw48t6JumVQOmrKqpmGcdwxnhqBQ==}
 
-  fflate@0.4.8:
-    resolution: {integrity: sha512-FJqqoDBR00Mdj9ppamLa/Y7vxm+PRmNWA67N846RvsoYVMKB4q3y/de5PA7gUmRMYK/8CMz2GDZQmCRN1wBcWA==}
-
   file-entry-cache@6.0.1:
     resolution: {integrity: sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==}
     engines: {node: ^10.12.0 || >=12.0.0}
@@ -2492,9 +2489,6 @@ packages:
   lexical@0.14.5:
     resolution: {integrity: sha512-ouV7Gyr9+3WT3WTrCgRAD3iZnlJWfs2/kBl2x3J2Q3X9uCWJn/zn21fQ8G1EUHlu0dvXPBmdk9hXb/FjTClt6Q==}
 
-  lexical@0.16.0:
-    resolution: {integrity: sha512-Skn45Qhriazq4fpAtwnAB11U//GKc4vjzx54xsV3TkDLDvWpbL4Z9TNRwRoN3g7w8AkWnqjeOSODKkrjgfRSrg==}
-
   lib0@0.2.94:
     resolution: {integrity: sha512-hZ3p54jL4Wpu7IOg26uC7dnEWiMyNlUrb9KoG7+xYs45WkQwpVvKFndVq2+pqLYKe1u8Fp3+zAfZHVvTK34PvQ==}
     engines: {node: '>=16'}
@@ -2857,12 +2851,6 @@ packages:
   postcss@8.4.38:
     resolution: {integrity: sha512-Wglpdk03BSfXkHoQa3b/oulrotAkwrlLDRSOb9D0bN86FdRyE9lppSp33aHNPgBa0JKCoB+drFLZkQoRRYae5A==}
     engines: {node: ^10 || ^12 || >=14}
-
-  posthog-js@1.136.7:
-    resolution: {integrity: sha512-vu/oZ9JlISinghw416Gm7KnrsH8KKVGqWCCpGsxwgvrBnYofJ4VbmlKnz/0gPy5/QOo/z/H4PzobDX79dyyU7A==}
-
-  preact@10.22.0:
-    resolution: {integrity: sha512-RRurnSjJPj4rp5K6XoP45Ui33ncb7e4H7WiOHVpjbkvqvA3U+N8Z6Qbo0AE6leGYBV66n8EhEaFixvIu3SkxFw==}
 
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
@@ -6065,8 +6053,6 @@ snapshots:
     dependencies:
       format: 0.2.2
 
-  fflate@0.4.8: {}
-
   file-entry-cache@6.0.1:
     dependencies:
       flat-cache: 3.2.0
@@ -6467,8 +6453,6 @@ snapshots:
       type-check: 0.4.0
 
   lexical@0.14.5: {}
-
-  lexical@0.16.0: {}
 
   lib0@0.2.94:
     dependencies:
@@ -7066,13 +7050,6 @@ snapshots:
       nanoid: 3.3.7
       picocolors: 1.0.1
       source-map-js: 1.2.0
-
-  posthog-js@1.136.7:
-    dependencies:
-      fflate: 0.4.8
-      preact: 10.22.0
-
-  preact@10.22.0: {}
 
   prelude-ls@1.2.1: {}
 

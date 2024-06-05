@@ -12,7 +12,8 @@
   "dependencies": {
     "@mdxeditor/editor": "^3.4.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "mdxe-plugin-highlight": "workspace:^"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

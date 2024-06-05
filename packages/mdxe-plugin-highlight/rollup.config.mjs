@@ -17,6 +17,7 @@ const config = defineConfig([
       }),
       nodeResolve(),
     ],
+    external: ["@mdxeditor/editor"],
   },
 ]);
 
