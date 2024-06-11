@@ -1,43 +1,42 @@
 import {
   Cell,
-  LexicalExportVisitor,
-  MdastImportVisitor,
   addActivePlugin$,
   addExportVisitor$,
   addImportVisitor$,
   realmPlugin,
   markdown$,
+  Signal,
+  map,
+  rootEditor$,
+  activeEditor$,
+  // rootEditor$,
+  // setMarkdown$,
+  // insertDecoratorNode$,
 } from "@mdxeditor/editor";
-import { $isTextNode, TextNode } from "lexical";
-import * as Mdast from "mdast";
+import {
+  HighlightedTextNode,
+  LexicalHighlightVisitor,
+  MdastHighlightVisitor,
+} from "./visitors";
 
 const stringsToHighlight$ = Cell<ReadonlyArray<string>>([]);
 const highlightColor$ = Cell<string>("red");
 
-export const MdastHighlightVisitor: MdastImportVisitor<Mdast.Text> = {
-  testNode: "text",
-  visitNode({ mdastNode, actions }): void {
-    console.log("Finally here");
-    // const textNode = $createTextNode(mdastNode.value);
-    // if (mdastNode.value.includes("Hello")) {
-    //   console.log("Includes!");
-    //   textNode.setStyle("color: red");
-    //   actions.addAndStepInto(textNode);
-    // }
-  },
-  priority: 1,
-};
+const entry$ = Signal<string>((r) => {
+  const transform = r.transformer(
+    map((str: string) => {
+      if (str.includes("Hello")) {
+        return "Hello World";
+      }
+      return str;
+    })
+  );
+  const transformMarkdown$ = transform(markdown$);
+  r.link(entry$, transformMarkdown$);
+});
 
-export const LexicalHighlightVisitor: LexicalExportVisitor<
-  TextNode,
-  Mdast.Text
-> = {
-  testLexicalNode: $isTextNode,
-  visitLexicalNode: ({ actions }) => {
-    actions.addAndStepInto("paragraph");
-  },
-  priority: 1,
-};
+// const highlightedMarkdown$ = Cell<string>("");
+// const isHighlighting$ = Cell<boolean>(false);
 
 type HighlightPluginOptions = {
   stringsToHighlight: string[];
@@ -48,7 +47,7 @@ export const highlightPlugin = realmPlugin<HighlightPluginOptions>({
   init(realm, options): void {
     console.log("Init");
     realm.pubIn({
-      [addActivePlugin$]: "highlight",
+      [addActivePlugin$]: "text-highlight",
       [addImportVisitor$]: [MdastHighlightVisitor],
       [addExportVisitor$]: [LexicalHighlightVisitor],
     });
@@ -57,9 +56,43 @@ export const highlightPlugin = realmPlugin<HighlightPluginOptions>({
     //Nothing to do here yet?
     realm.pub(stringsToHighlight$, options?.stringsToHighlight ?? []);
     realm.pub(highlightColor$, options?.highlightColor ?? "red");
-    // const something = realm;
-    realm.sub(markdown$, (markdown) => {
-      console.log(markdown);
+
+    const stringsToHighlight = realm.getValue(stringsToHighlight$);
+
+    const md = realm.pipe(
+      markdown$,
+      map((str: string) => {
+        const regex = new RegExp(stringsToHighlight.join("|"), "gi");
+        if (regex.test(str)) {
+          return str.replace(regex, (match) => `**${match}**`); // replace with your desired replacement
+        }
+        return str;
+      })
+    );
+
+    realm.sub(md, (markdown) => {
+      const rootEditor = realm.getValue(rootEditor$);
+      const currentEditor = realm.getValue(activeEditor$);
+      const stringsToHighlight = realm.getValue(stringsToHighlight$);
+      if (!stringsToHighlight || stringsToHighlight.length === 0) {
+        return;
+      }
+
+      if (!rootEditor || !currentEditor) {
+        return;
+      }
+
+      console.log("Current Editor", currentEditor);
+
+      // This might be useful but we might have to switch back to the TextNode's
+      // https://lexical.dev/docs/concepts/transforms
+      currentEditor.registerNodeTransform(HighlightedTextNode, (node) => {});
+
+      const hTextNodes = rootEditor.hasNode(HighlightedTextNode);
+
+      console.log(hTextNodes, "HTextNodes");
+
+      // realm.pubIn({ [setMarkdown$]: markdown });
     });
   },
 });
