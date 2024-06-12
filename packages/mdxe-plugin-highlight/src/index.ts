@@ -1,23 +1,22 @@
 import {
   Cell,
   addActivePlugin$,
-  addExportVisitor$,
-  addImportVisitor$,
+  // addExportVisitor$,
+  // addImportVisitor$,
   realmPlugin,
   markdown$,
   Signal,
   map,
-  rootEditor$,
   activeEditor$,
   // rootEditor$,
   // setMarkdown$,
   // insertDecoratorNode$,
 } from "@mdxeditor/editor";
-import {
-  HighlightedTextNode,
-  LexicalHighlightVisitor,
-  MdastHighlightVisitor,
-} from "./visitors";
+import {} from // HighlightedTextNode,
+// LexicalHighlightVisitor,
+// MdastHighlightVisitor,
+"./visitors";
+import { TextNode } from "lexical";
 
 const stringsToHighlight$ = Cell<ReadonlyArray<string>>([]);
 const highlightColor$ = Cell<string>("red");
@@ -48,8 +47,8 @@ export const highlightPlugin = realmPlugin<HighlightPluginOptions>({
     console.log("Init");
     realm.pubIn({
       [addActivePlugin$]: "text-highlight",
-      [addImportVisitor$]: [MdastHighlightVisitor],
-      [addExportVisitor$]: [LexicalHighlightVisitor],
+      // [addImportVisitor$]: [MdastHighlightVisitor],
+      // [addExportVisitor$]: [LexicalHighlightVisitor],
     });
   },
   update(realm, options): void {
@@ -59,40 +58,29 @@ export const highlightPlugin = realmPlugin<HighlightPluginOptions>({
 
     const stringsToHighlight = realm.getValue(stringsToHighlight$);
 
-    const md = realm.pipe(
-      markdown$,
-      map((str: string) => {
-        const regex = new RegExp(stringsToHighlight.join("|"), "gi");
-        if (regex.test(str)) {
-          return str.replace(regex, (match) => `**${match}**`); // replace with your desired replacement
-        }
-        return str;
-      })
-    );
-
-    realm.sub(md, (markdown) => {
-      const rootEditor = realm.getValue(rootEditor$);
-      const currentEditor = realm.getValue(activeEditor$);
-      const stringsToHighlight = realm.getValue(stringsToHighlight$);
-      if (!stringsToHighlight || stringsToHighlight.length === 0) {
+    const currentEditor = realm.getValue(activeEditor$);
+    if (!currentEditor) {
+      return;
+    }
+    currentEditor.registerNodeTransform(TextNode, (textNode) => {
+      // This transform runs twice but does nothing the first time because it doesn't meet the preconditions
+      console.log(textNode.getTextContent());
+      if (
+        textNode
+          .getStyle()
+          .includes(`color: ${realm.getValue(highlightColor$)}`)
+      ) {
+        console.log("Already highlighted");
         return;
       }
-
-      if (!rootEditor || !currentEditor) {
-        return;
+      if (
+        stringsToHighlight.some((highlightString) => {
+          const regex = new RegExp(highlightString, "gi");
+          return regex.test(textNode.getTextContent());
+        })
+      ) {
+        textNode.setStyle(`color: ${realm.getValue(highlightColor$)}`);
       }
-
-      console.log("Current Editor", currentEditor);
-
-      // This might be useful but we might have to switch back to the TextNode's
-      // https://lexical.dev/docs/concepts/transforms
-      currentEditor.registerNodeTransform(HighlightedTextNode, (node) => {});
-
-      const hTextNodes = rootEditor.hasNode(HighlightedTextNode);
-
-      console.log(hTextNodes, "HTextNodes");
-
-      // realm.pubIn({ [setMarkdown$]: markdown });
     });
   },
 });
