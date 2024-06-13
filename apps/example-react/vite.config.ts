@@ -10,5 +10,9 @@ export default ({ mode }) => {
     preview: {
       port: 4001,
     },
+    server: {
+      port: 3000,
+      host: "0.0.0.0"
+    },
   });
 };

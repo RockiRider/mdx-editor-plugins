@@ -21,7 +21,7 @@ import {
 } from "@mdxeditor/editor";
 import { highlightPlugin } from "mdxe-plugin-highlight";
 import "@mdxeditor/editor/style.css";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 const Editor = () => {
   const editorRef = useRef<MDXEditorMethods | null>(null);
@@ -35,7 +35,7 @@ const Editor = () => {
   };
 
   return (
-    <>
+    <div style={{backgroundColor: "#FFF"}}>
       <MDXEditor
         ref={editorRef}
         markdown=""
@@ -72,7 +72,7 @@ const Editor = () => {
       />
       <button onClick={handleGetState}>Get State</button>
       <button onClick={insertStartingText}>Insert Starting Text</button>
-    </>
+    </div>
   );
 };
 
