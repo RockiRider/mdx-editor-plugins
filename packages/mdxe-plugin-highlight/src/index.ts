@@ -62,25 +62,48 @@ export const highlightPlugin = realmPlugin<HighlightPluginOptions>({
     if (!currentEditor) {
       return;
     }
+    
     currentEditor.registerNodeTransform(TextNode, (textNode) => {
       // This transform runs twice but does nothing the first time because it doesn't meet the preconditions
-      console.log(textNode.getTextContent());
-      if (
-        textNode
-          .getStyle()
-          .includes(`color: ${realm.getValue(highlightColor$)}`)
-      ) {
-        console.log("Already highlighted");
+      const includes = stringsToHighlight.includes(textNode.getTextContent())
+
+      if(!includes){
+        if (
+          textNode
+            .getStyle()
+            .includes(`color: ${realm.getValue(highlightColor$)}`)
+        ) {
+          textNode.setStyle(`color: var(--baseTextContrast)`)
+        }
         return;
       }
-      if (
-        stringsToHighlight.some((highlightString) => {
+
+      if(includes){
+        stringsToHighlight.forEach((highlightString) => {
           const regex = new RegExp(highlightString, "gi");
-          return regex.test(textNode.getTextContent());
-        })
-      ) {
-        textNode.setStyle(`color: ${realm.getValue(highlightColor$)}`);
+          let match;
+      
+          //Execute loop until we get back a null
+          while ((match = regex.exec(textNode.getTextContent())) !== null) {
+              const start = match.index;
+              const end = start + highlightString.length;
+              const [before, highlighted, after] = textNode.splitText(start, end);
+  
+              if(!highlighted && !after){
+                //If the string matches at the begining of the node
+                before.setStyle(`color: ${realm.getValue(highlightColor$)}`);
+              } else {
+                //If the string matches at any other point in the node
+                highlighted.setStyle(`color: ${realm.getValue(highlightColor$)}`);
+              }
+      
+              if (after) {
+                // Set the text node to the last node. Might not be needed?
+                  textNode = after;
+              }
+          }
+        });
       }
     });
-  },
+  }
 });
