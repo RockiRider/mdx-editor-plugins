@@ -1,22 +1,14 @@
 import {
   Cell,
   addActivePlugin$,
-  // addExportVisitor$,
-  // addImportVisitor$,
   realmPlugin,
   markdown$,
   Signal,
   map,
   activeEditor$,
-  // rootEditor$,
-  // setMarkdown$,
-  // insertDecoratorNode$,
 } from "@mdxeditor/editor";
-import {} from // HighlightedTextNode,
-// LexicalHighlightVisitor,
-// MdastHighlightVisitor,
-"./visitors";
 import { TextNode } from "lexical";
+import { checkIfArrayIncludes, checkIfSubstringIncludes } from "./utils";
 
 const stringsToHighlight$ = Cell<ReadonlyArray<string>>([]);
 const highlightColor$ = Cell<string>("red");
@@ -34,25 +26,18 @@ const entry$ = Signal<string>((r) => {
   r.link(entry$, transformMarkdown$);
 });
 
-// const highlightedMarkdown$ = Cell<string>("");
-// const isHighlighting$ = Cell<boolean>(false);
-
 type HighlightPluginOptions = {
   stringsToHighlight: string[];
   highlightColor: string;
 };
 
 export const highlightPlugin = realmPlugin<HighlightPluginOptions>({
-  init(realm, options): void {
-    console.log("Init");
+  init(realm): void {
     realm.pubIn({
       [addActivePlugin$]: "text-highlight",
-      // [addImportVisitor$]: [MdastHighlightVisitor],
-      // [addExportVisitor$]: [LexicalHighlightVisitor],
     });
   },
   update(realm, options): void {
-    //Nothing to do here yet?
     realm.pub(stringsToHighlight$, options?.stringsToHighlight ?? []);
     realm.pub(highlightColor$, options?.highlightColor ?? "red");
 
@@ -62,48 +47,87 @@ export const highlightPlugin = realmPlugin<HighlightPluginOptions>({
     if (!currentEditor) {
       return;
     }
-    
+
     currentEditor.registerNodeTransform(TextNode, (textNode) => {
       // This transform runs twice but does nothing the first time because it doesn't meet the preconditions
-      const includes = stringsToHighlight.includes(textNode.getTextContent())
-
-      if(!includes){
+      const currentText = textNode.getTextContent();
+      const includes = checkIfArrayIncludes(currentText, stringsToHighlight);
+      if (!includes) {
         if (
           textNode
             .getStyle()
             .includes(`color: ${realm.getValue(highlightColor$)}`)
         ) {
-          textNode.setStyle(`color: var(--baseTextContrast)`)
+          // If the TextNode doesn't include any of the strings to highlight but it is middle, remove the highlight.
+          textNode.setStyle(`color: unset`);
         }
         return;
       }
 
-      if(includes){
-        stringsToHighlight.forEach((highlightString) => {
+      if (includes) {
+        const isAlreadyHighlighted = textNode
+          .getStyle()
+          .includes(`color: ${realm.getValue(highlightColor$)}`);
+
+        for (let i = 0; i < stringsToHighlight.length; i++) {
+          const highlightString = stringsToHighlight[i];
+          // Check if the current highlightString is included in the textNode's text
+
+          if (currentText === highlightString && isAlreadyHighlighted) {
+            // If the textNode's text is the same as the highlightString and it is already middle, return early to prevent infinite looping
+            return;
+          }
+
+          if (!checkIfSubstringIncludes(currentText, highlightString)) {
+            continue; // Skip to the next highlightString if the current one is not found
+          }
+
           const regex = new RegExp(highlightString, "gi");
           let match;
-      
-          //Execute loop until we get back a null
+
           while ((match = regex.exec(textNode.getTextContent())) !== null) {
-              const start = match.index;
-              const end = start + highlightString.length;
-              const [before, highlighted, after] = textNode.splitText(start, end);
-  
-              if(!highlighted && !after){
-                //If the string matches at the begining of the node
-                before.setStyle(`color: ${realm.getValue(highlightColor$)}`);
+            const start = match.index;
+            const end = start + highlightString.length;
+            const [before, middle, after] = textNode.splitText(start, end);
+
+            if (!before && !middle && !after) {
+              // No nodes exist, we should exit.
+              break;
+            }
+
+            if (before && !middle && !after) {
+              // If there is no middle or after node, this means this is the first node.
+              before.setStyle(`color: ${realm.getValue(highlightColor$)}`);
+              textNode = before;
+              break;
+            } else if (before && middle && !after) {
+              // This means the middle node is typically the correct target.
+              const middleText = middle.getTextContent();
+              if (middleText === highlightString) {
+                //Check to see if middleText matches the regex, if it does we highlight!
+                middle.setStyle(`color: ${realm.getValue(highlightColor$)}`);
               } else {
-                //If the string matches at any other point in the node
-                highlighted.setStyle(`color: ${realm.getValue(highlightColor$)}`);
+                //If it doesn't match the regex, we don't highlight.
+                middle.setStyle(`color: unset`);
               }
-      
-              if (after) {
-                // Set the text node to the last node. Might not be needed?
-                  textNode = after;
+              textNode = middle;
+              break;
+            } else {
+              // This means all 3 exist. Middle should still be the target due to the split
+              const middleText = middle.getTextContent();
+              if (middleText === highlightString) {
+                //Check to see if middleText matches the regex, if it does we highlight!
+                middle.setStyle(`color: ${realm.getValue(highlightColor$)}`);
+              } else {
+                //If it doesn't match the regex, we don't highlight.
+                middle.setStyle(`color: unset`);
               }
+              textNode = after;
+              break;
+            }
           }
-        });
+        }
       }
     });
-  }
+  },
 });
