@@ -1,8 +1,9 @@
 {
     "name": "mdxe-plugin-highlight",
-    "version": "2.0.5",
+    "version": "1.0.0",
     "type": "module",
     "homepage": "",
+    "author": "Tsotne Gvadzabia",
     "keywords": [
         "vite",
         "posthog",
