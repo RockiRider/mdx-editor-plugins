@@ -17,7 +17,7 @@ const config = defineConfig([
       }),
       nodeResolve(),
     ],
-    external: ["@mdxeditor/editor"],
+    external: ["@mdxeditor/editor", "lexical"],
   },
 ]);
 

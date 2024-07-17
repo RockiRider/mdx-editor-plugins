@@ -5,10 +5,12 @@
     "homepage": "",
     "author": "Tsotne Gvadzabia",
     "keywords": [
-        "vite",
-        "posthog",
-        "analytics",
-        "plugin"
+        "mdxe",
+        "mdx",
+        "mdxeditor",
+        "highlight",
+        "code",
+        "editor"
     ],
     "repository": {
         "type": "git",
