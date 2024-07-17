@@ -7,7 +7,7 @@
     "docs:build": "turbo build --filter=docs",
     "example:build": "turbo build --filter=example-react",
     "lint": "turbo lint",
-    "hl:build": "turbo build --filter=mdxe-plugin-highlight",
+    "build": "turbo build --filter=mdxe-plugin-highlight",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "preview": "turbo preview --filter=example-react",
     "fpreview": "turbo preview --filter=example-react --force",
