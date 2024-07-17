@@ -2,7 +2,7 @@
   "name": "mdxe-plugins",
   "private": true,
   "scripts": {
-    "dev": "turbo watch dev --filter=example-react",
+    "dev": "turbo dev --filter=example-react",
     "docs:dev": "turbo dev --filter=docs",
     "docs:build": "turbo build --filter=docs",
     "example:build": "turbo build --filter=example-react",
@@ -19,7 +19,7 @@
     "@playwright/test": "^1.40.1",
     "@types/node": "^20.11.0",
     "prettier": "^3.1.1",
-    "turbo": "latest",
+    "turbo": "^2.0.0",
     "typescript": "^5.4.3"
   },
   "engines": {

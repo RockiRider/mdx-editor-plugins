@@ -6,7 +6,6 @@ import {
   InsertTable,
   ListsToggle,
   MDXEditor,
-  MDXEditorMethods,
   UndoRedo,
   diffSourcePlugin,
   headingsPlugin,
@@ -21,24 +20,20 @@ import {
 } from "@mdxeditor/editor";
 import { highlightPlugin } from "mdxe-plugin-highlight";
 import "@mdxeditor/editor/style.css";
-import { useRef } from "react";
+import { useState } from "react";
 
 const Editor = () => {
-  const editorRef = useRef<MDXEditorMethods | null>(null);
+  const [editorState, setEditorState] = useState<string>("");
 
   const handleGetState = () => {
-    console.log(editorRef.current?.getMarkdown());
-  };
-
-  const insertStartingText = () => {
-    editorRef.current?.setMarkdown(`Hello World`);
+    console.log(editorState);
   };
 
   return (
-    <div style={{backgroundColor: "#FFF"}}>
+    <div style={{ backgroundColor: "#FFF" }}>
       <MDXEditor
-        ref={editorRef}
-        markdown=""
+        markdown={editorState}
+        onChange={(newState) => setEditorState(newState)}
         plugins={[
           headingsPlugin(),
           listsPlugin(),
@@ -71,7 +66,6 @@ const Editor = () => {
         ]}
       />
       <button onClick={handleGetState}>Get State</button>
-      <button onClick={insertStartingText}>Insert Starting Text</button>
     </div>
   );
 };

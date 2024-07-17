@@ -20,5 +20,6 @@
     "preview": {
       "dependsOn": ["^build", "build"]
     }
-  }
+  },
+  "ui": "stream"
 }

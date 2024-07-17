@@ -37,19 +37,17 @@ export const highlightPlugin = realmPlugin<HighlightPluginOptions>({
       [addActivePlugin$]: "text-highlight",
     });
   },
-  update(realm, options): void {
-    realm.pub(stringsToHighlight$, options?.stringsToHighlight ?? []);
-    realm.pub(highlightColor$, options?.highlightColor ?? "red");
-
-    const stringsToHighlight = realm.getValue(stringsToHighlight$);
-
+  postInit(realm, params) {
     const currentEditor = realm.getValue(activeEditor$);
     if (!currentEditor) {
       return;
     }
 
+    // Register listener for textNodes
     currentEditor.registerNodeTransform(TextNode, (textNode) => {
       // This transform runs twice but does nothing the first time because it doesn't meet the preconditions
+      const stringsToHighlight = realm.getValue(stringsToHighlight$);
+
       const currentText = textNode.getTextContent();
       const includes = checkIfArrayIncludes(currentText, stringsToHighlight);
       if (!includes) {
@@ -129,5 +127,9 @@ export const highlightPlugin = realmPlugin<HighlightPluginOptions>({
         }
       }
     });
+  },
+  update(realm, options): void {
+    realm.pub(stringsToHighlight$, options?.stringsToHighlight ?? []);
+    realm.pub(highlightColor$, options?.highlightColor ?? "red");
   },
 });
